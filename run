@@ -1,0 +1,216 @@
+#! /bin/bash
+#
+#
+
+CONTAINER="[flywheel/fsl-feat]"
+echo -e "$CONTAINER  Initiated"
+
+
+###############################################################################
+# Built to flywheel-v0 spec.
+
+FLYWHEEL_BASE=/flywheel/v0
+OUTPUT_DIR=$FLYWHEEL_BASE/output
+INPUT_DIR=$FLYWHEEL_BASE/input/NIFTI
+SLICE_FILE_DIR=$FLYWHEEL_BASE/input/SCLICE_FILE
+MANIFEST=$FLYWHEEL_BASE/manifest.json
+CONFIG_FILE=$FLYWHEEL_BASE/config.json
+
+
+###############################################################################
+# Configure the ENV
+
+chmod +x /etc/fsl/5.0/fsl.sh
+source /etc/fsl/5.0/fsl.sh
+
+
+###############################################################################
+# Initialize config from the manifest
+
+if [[ -f $CONFIG_FILE ]]; then
+  eval $(jq -r '.config | to_entries[] | "FW_CONFIG_\(.key)=\(.value)"' $CONFIG_FILE)
+else
+  CONFIG_FILE=$FLYWHEEL_BASE/manifest.json
+  eval $(jq -r '.config | to_entries[] | "FW_CONFIG_\(.key)=\(.value.default)"' $CONFIG_FILE)
+fi
+
+
+###############################################################################
+# INPUT File
+
+input_file=`find $INPUT_DIR/* -maxdepth 0 -not -path '*/\.*' -type f -name "*.nii*" | head -1`
+if [[ -z $input_file ]]
+  echo "$CONTAINER  INPUT_DIR has no valid input files!"
+  exit 1
+fi
+
+
+####################################################################
+# FillTemplate
+####################################################################
+
+TEMPLATE=/flywheel/v0/Template/Template.fsf
+
+
+####################################################################
+# VOLUME INFO
+####################################################################
+
+# THE INPUT FMRI VOLUME TO USE (CAN BE .NII OR .NII.GZ)
+INPUT_DATA="${input_file}"
+
+# USE 'FSLHD' TO FIND AND SET THE TR
+#TR=` fslhd ${INPUT_DATA} | grep pixdim3 | tr -s ' ' | cut -d' ' -f2 `
+TR=` fslhd ${INPUT_DATA} | grep pixdim4 | awk '{print $2}' `
+
+# FOR SOME REASON IT LIKES TO KNOW THE NUMBER OF VOXELS.  WE'LL
+# use 'fslhd' again to do this
+DXYZ=(` fslhd ${INPUT_DATA} | grep ^dim[1-4] `)
+NX=${DXYZ[1]}
+NY=${DXYZ[3]}
+NZ=${DXYZ[5]}
+NUM_VOL=${DXYZ[7]}
+
+# As long as NX NY NZ and NUM_VOL are int, this works fine.
+# Decimals will mess it up
+NUM_VOX=$(( NX*NY*NZ*NUM_VOL ))
+
+# SET THE NUMBER OF VOLUMES TO DELETE
+DEL_VOL=0
+
+# SET THE OUTPUT DIRECTORY
+OUTPUTDIR="${OUTPUT_DIR}"/fsl_preproc
+if [ ! -e ${OUTPUTDIR} ]; then
+    mkdir ${OUTPUTDIR}
+fi
+
+
+####################################################################
+# STATISTICS
+# Strictly speaking, these aren't important for the preprocessing
+# and COULD be ignored
+####################################################################
+
+# SET THE BRAIN BACKGROUND THRESHOLD
+# It is used in intensity normalization, brain mask
+# generation and various other places in the analysis.
+BB_THRESH=$FW_CONFIG_BB_THRESH
+
+# SET THE Z THRESHOLD FOR DESIGN EFFICIENCY CALCULATION
+# used to determine what level of activation would
+# be statistically significant, to be used only in the design
+# efficiency calculation. Increasing this will result in higher
+# estimates of required effect.
+Z_THRESH=$FW_CONFIG_Z_THRESH
+
+# SET THE FMRI NOISE LEVEL
+# the standard deviation (over time) for a
+# typical voxel, expressed as a percentage of the baseline signal level.
+NOISE_LVL=$FW_CONFIG_NOISE_LVL
+
+# SET TNE TEMPORAL SMOOTHNESS
+# is the smoothness coefficient in a simple
+# AR(1) autocorrelation model (much simpler than that actually used in
+# the FILM timeseries analysis but good enough for the efficiency
+# calculation here).
+T_SMOOTH=$FW_CONFIG_T_SMOOTH
+
+####################################################################
+# PREPROCESSING OPTIONS
+####################################################################
+
+# RUN MOTION CORRECTION
+MC=$FW_CONFIG_MC
+
+# RUN SLICE TIMING CORRECTION
+# 0 : None
+# 1 : Regular up (0, 1, 2, 3, ...)
+# 2 : Regular down
+# 3 : Use slice order file
+# 4 : Use slice timings file
+# 5 : Interleaved (0, 2, 4 ... 1, 3, 5 ... )
+STC=$FW_CONFIG_STC
+
+# SLICE ORDER/TIMING FILE
+# If at slice order or timing file is chosen,
+# This must also be set
+if [[ $STC == 2 ]]; then
+  SLICE_FILE=$(find ${SLICE_FILE_DIR}/* -type f)
+else
+  SLICE_FILE=''
+fi
+# RUN BRAIN EXTRACTION USING FSL's BET
+BET=$FW_CONFIG_BET
+
+# SET THE FWHM FOR SPATIAL SMOOTHING (mm)
+FWHM=$FW_CONFIG_FWHM
+
+# RUN INTENSITY NORMALIZATION
+INT_NORM=$FW_CONFIG_INT_NORM
+
+# HIGHPASS FILTER CUTOFF (seconds)
+HPF_CUTOFF=100
+
+# RUN HIGHPASS FILTERING
+HPF=1
+
+####################################################################
+# CREATE TEMPLATE
+####################################################################
+
+# Create a lost of all the variable names
+# which match the place-holding text in the template
+VAR_STRINGS=( INPUT_DATA TR NUM_VOL NUM_VOX DEL_VOL OUTPUTDIR BB_THRESH Z_THRESH NOISE_LVL T_SMOOTH MC STC SLICE_FILE BET FWHM INT_NORM HPF_CUTOFF HPF )
+
+DESIGN_FILE=${OUTPUTDIR}/Design.fsf
+cp ${TEMPLATE} ${DESIGN_FILE}
+
+# loop through and preform substitution
+for var_name in ${VAR_STRINGS[@]}; do
+
+    var_val=` eval 'echo $'$var_name `
+    #We need to replace and backslashes with "\/"
+    var_val=` echo ${var_val////"\/"} `
+
+    sed -i -e "s/\^${var_name}\^/${var_val}/g" ${DESIGN_FILE}
+
+done
+
+## Or with a bash-only approach:
+#
+#for var_name in ${VAR_STRINGS[@]}; do
+#
+#    var_val=eval 'echo $'$var_name
+#    while read a ; do echo ${a//^${var_name}^/${var_val}} ; done < ${OUTPUTDIR}/MyDesign.fsf > ${OUTPUTDIR}/MyDesign.fsf.t ; mv ${OUTPUTDIR}/MyDesign.fsf{.t,}
+#
+#done
+
+####################################################################
+# RUN THE Algorithm with the .FSF FILE
+####################################################################
+
+$FSL_DIR/feat ${DESIGN_FILE}
+FEAT_EXIT_STATUS=$?
+
+#TODO CLEANUP THE OUTPUT DIRECTORIES
+# fsl will create an ${OUTPUTDIR}.feat directory anyways,
+# so we can delete the old one
+#rm -rf ${OUTPUTDIR}
+
+
+###############################################################################
+# Get a list of the files in the output directory (written with the output basename)
+
+outputs=$(find $OUTPUT_DIR/* -maxdepth 0 -type f -name "`basename "$output_file_base"`*")
+
+
+# If outputs exist, compress and exit
+if [[ -z $outputs ]]
+  then
+      echo "$CONTAINER  No results found in output directory... Exiting"
+      exit 1
+  else
+      echo -e "$CONTAINER  Done!"
+fi
+
+exit FEAT_EXIT_STATUS
