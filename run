@@ -48,6 +48,7 @@ fi
 
 ####################################################################
 # FillTemplate
+# Credit goes to David Parker @UPENN
 
 # VOLUME INFO
 ####################################################################
@@ -75,9 +76,9 @@ NUM_VOX=$(( NX*NY*NZ*NUM_VOL ))
 DEL_VOL=0
 
 # SET THE OUTPUT DIRECTORY
-OUTPUTDIR="${OUTPUT_DIR}"/fsl_preproc
-if [ ! -e ${OUTPUTDIR} ]; then
-    mkdir ${OUTPUTDIR}
+FEAT_OUTPUT_DIR="${OUTPUT_DIR}"/fsl_preproc
+if [ ! -e ${FEAT_OUTPUT_DIR} ]; then
+    mkdir ${FEAT_OUTPUT_DIR}
 fi
 
 
@@ -156,7 +157,7 @@ HPF=1
 
 # Create a lost of all the variable names
 # which match the place-holding text in the template
-VAR_STRINGS=( INPUT_DATA TR NUM_VOL NUM_VOX DEL_VOL OUTPUTDIR BB_THRESH Z_THRESH NOISE_LVL T_SMOOTH MC STC SLICE_FILE BET FWHM INT_NORM HPF_CUTOFF HPF )
+VAR_STRINGS=( INPUT_DATA TR NUM_VOL NUM_VOX DEL_VOL FEAT_OUTPUT_DIR BB_THRESH Z_THRESH NOISE_LVL T_SMOOTH MC STC SLICE_FILE BET FWHM INT_NORM HPF_CUTOFF HPF )
 
 DESIGN_FILE=${OUTPUT_DIR}/Design.fsf
 cp ${TEMPLATE} ${DESIGN_FILE}
@@ -164,11 +165,11 @@ cp ${TEMPLATE} ${DESIGN_FILE}
 # loop through and preform substitution
 for var_name in ${VAR_STRINGS[@]}; do
 
-    var_val=` eval 'echo $'$var_name `
-    #We need to replace and backslashes with "\/"
-    var_val=` echo ${var_val////"\/"} `
+  var_val=` eval 'echo $'$var_name `
+  #We need to replace and backslashes with "\/"
+  var_val=` echo ${var_val////"\/"} `
 
-    sed -i -e "s/\^${var_name}\^/${var_val}/g" ${DESIGN_FILE}
+  sed -i -e "s/\^${var_name}\^/${var_val}/g" ${DESIGN_FILE}
 
 done
 
@@ -177,32 +178,54 @@ done
 # RUN THE Algorithm with the .FSF FILE
 ####################################################################
 
-echo -e "${CONTAINER}  Starting feat..."
-feat ${DESIGN_FILE}
+echo -e "${CONTAINER}  Running FEAT..."
+time feat ${DESIGN_FILE}
 FEAT_EXIT_STATUS=$?
 
-#TODO CLEANUP THE OUTPUT DIRECTORIES
-# fsl will create an ${OUTPUTDIR}.feat directory anyways,
-# so we can delete the old one
-rm -rf ${OUTPUTDIR}
 
-# TODO:
-# Move the relevant files to the output directory and compress the rest
+####################################################################
+# Upon success, convert index to a webpage
+####################################################################
+
+if [[ $FEAT_EXIT_STATUS == 0 ]]; then
+  # Convert index to standalone index
+  echo "$CONTAINER  generating output html..."
+  output_html_files=$(find ${OUTPUT_DIR} -type f -name "*.html")
+  for f in $output_html_files; do
+    web2htmloutput=${OUTPUT_DIR}/`basename $f`
+    python /opt/webpage2html/webpage2html.py -q -s "$f" > "$web2htmloutput"
+    rm -f $f # Don't keep the html around once the new file is generated.
+  done
+fi
+
+
+####################################################################
+# CLEANUP THE OUTPUT DIRECTORIES
+####################################################################
+
+if [[ $FEAT_EXIT_STATUS == 0 ]]; then
+  # FEAT will create an ${FEAT_OUTPUT_DIR}.feat directory anyways, so we can
+  # delete the old one and set the var to the actual output directory
+  rm -rf ${FEAT_OUTPUT_DIR}
+  FEAT_OUTPUT_DIR=${FEAT_OUTPUT_DIR}.feat
+
+  # Zip and move the relevant files to the output directory
+  MC_DIR=$(find ${FEAT_OUTPUT_DIR}/* -type d -name "mc")
+  zip -r ${OUTPUT_DIR}/mc.zip ${MC_DIR} && rm -rf ${MC_DIR}
+  LOG_DIR=$(find ${FEAT_OUTPUT_DIR}/* -type d -name "logs")
+  zip -r ${OUTPUT_DIR}/logs.zip ${LOG_DIR} && rm -rf ${LOG_DIR}
+  mv ${FEAT_OUTPUT_DIR}/* ${OUTPUT_DIR} && rm -rf ${FEAT_OUTPUT_DIR}
+fi
 
 
 ###############################################################################
-# Get a list of the files in the output directory (written with the output basename)
+# EXIT
+###############################################################################
 
-outputs=$(find ${OUTPUTDIR}.feat/* -maxdepth 0 -type f)
-
-
-# If outputs exist, compress and exit
-if [[ -z $outputs ]]
-  then
-      echo "$CONTAINER  No results found in output directory... Exiting"
-      exit 1
-  else
-      echo -e "$CONTAINER  Done!"
+if [[ $FEAT_EXIT_STATUS == 0 ]]; then
+  echo -e "$CONTAINER  Done!"
+  exit 0
+else
+  echo "$CONTAINER  Error while running FEAT... Exiting($FEAT_EXIT_STATUS)"
+  exit $FEAT_EXIT_STATUS
 fi
-
-exit FEAT_EXIT_STATUS
