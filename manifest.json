@@ -75,6 +75,13 @@
       "minimum": 0,
       "maximum": 1,
       "type": "integer"
+    },
+    "REG_STANDARD_IMAGE": {
+      "description": "REGISTER TO STANDARD IMAGE (MNI152_T1_2mm_brain) [1=yes, 0=no. default=1]",
+      "default": 1,
+      "minimum": 0,
+      "maximum": 1,
+      "type": "integer"
     }
   },
   "inputs": {

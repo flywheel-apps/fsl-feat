@@ -233,7 +233,7 @@ set fmri(reghighres_search) 90
 set fmri(reghighres_dof) BBR
 
 # Registration to standard image?
-set fmri(regstandard_yn) 0
+set fmri(regstandard_yn) "^REG_STANDARD_IMAGE^"
 
 # Use alternate reference images?
 set fmri(alternateReference_yn) 0
