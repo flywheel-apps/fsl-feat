@@ -15,13 +15,14 @@ INPUT_DIR=$FLYWHEEL_BASE/input/NIFTI
 SLICE_FILE_DIR=$FLYWHEEL_BASE/input/SCLICE_FILE
 MANIFEST=$FLYWHEEL_BASE/manifest.json
 CONFIG_FILE=$FLYWHEEL_BASE/config.json
-
+TEMPLATE=$FLYWHEEL_BASE/template.fsf
 
 ###############################################################################
 # Configure the ENV
 
 chmod +x /etc/fsl/5.0/fsl.sh
 source /etc/fsl/5.0/fsl.sh
+export USER=Flywheel
 
 
 ###############################################################################
@@ -39,7 +40,7 @@ fi
 # INPUT File
 
 input_file=`find $INPUT_DIR/* -maxdepth 0 -not -path '*/\.*' -type f -name "*.nii*" | head -1`
-if [[ -z $input_file ]]
+if [[ -z $input_file ]]; then
   echo "$CONTAINER  INPUT_DIR has no valid input files!"
   exit 1
 fi
@@ -47,12 +48,7 @@ fi
 
 ####################################################################
 # FillTemplate
-####################################################################
 
-TEMPLATE=/flywheel/v0/Template/Template.fsf
-
-
-####################################################################
 # VOLUME INFO
 ####################################################################
 
@@ -162,7 +158,7 @@ HPF=1
 # which match the place-holding text in the template
 VAR_STRINGS=( INPUT_DATA TR NUM_VOL NUM_VOX DEL_VOL OUTPUTDIR BB_THRESH Z_THRESH NOISE_LVL T_SMOOTH MC STC SLICE_FILE BET FWHM INT_NORM HPF_CUTOFF HPF )
 
-DESIGN_FILE=${OUTPUTDIR}/Design.fsf
+DESIGN_FILE=${OUTPUT_DIR}/Design.fsf
 cp ${TEMPLATE} ${DESIGN_FILE}
 
 # loop through and preform substitution
@@ -176,32 +172,28 @@ for var_name in ${VAR_STRINGS[@]}; do
 
 done
 
-## Or with a bash-only approach:
-#
-#for var_name in ${VAR_STRINGS[@]}; do
-#
-#    var_val=eval 'echo $'$var_name
-#    while read a ; do echo ${a//^${var_name}^/${var_val}} ; done < ${OUTPUTDIR}/MyDesign.fsf > ${OUTPUTDIR}/MyDesign.fsf.t ; mv ${OUTPUTDIR}/MyDesign.fsf{.t,}
-#
-#done
 
 ####################################################################
 # RUN THE Algorithm with the .FSF FILE
 ####################################################################
 
-$FSL_DIR/feat ${DESIGN_FILE}
+echo -e "${CONTAINER}  Starting feat..."
+feat ${DESIGN_FILE}
 FEAT_EXIT_STATUS=$?
 
 #TODO CLEANUP THE OUTPUT DIRECTORIES
 # fsl will create an ${OUTPUTDIR}.feat directory anyways,
 # so we can delete the old one
-#rm -rf ${OUTPUTDIR}
+rm -rf ${OUTPUTDIR}
+
+# TODO:
+# Move the relevant files to the output directory and compress the rest
 
 
 ###############################################################################
 # Get a list of the files in the output directory (written with the output basename)
 
-outputs=$(find $OUTPUT_DIR/* -maxdepth 0 -type f -name "`basename "$output_file_base"`*")
+outputs=$(find ${OUTPUTDIR}.feat/* -maxdepth 0 -type f)
 
 
 # If outputs exist, compress and exit

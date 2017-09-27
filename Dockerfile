@@ -21,7 +21,7 @@ ENV FLYWHEEL /flywheel/v0
 RUN mkdir -p ${FLYWHEEL}
 COPY run ${FLYWHEEL}/run
 COPY manifest.json ${FLYWHEEL}/manifest.json
-COPY template.fsf ${FLYWHEEL}
+COPY template.fsf ${FLYWHEEL}/
 
 # Configure entrypoint
 ENTRYPOINT ["/flywheel/v0/run"]
