@@ -10,7 +10,7 @@
   "flywheel": "0",
   "version": "0.1",
   "custom": {
-    "docker-image": "scitran/fsl-feat:v0.1"
+    "docker-image": "flywheel/fsl-feat:v0.1"
   },
   "config": {
     "BB_THRESH": {
