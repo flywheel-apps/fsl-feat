@@ -15,4 +15,4 @@ This includes the following steps, all of which are optional (see `manifest.json
 4) Intensity Normalization  (default YES)
 5) High-Pass Filtering      (default 100s cutoff)
 6) Brain extraction         (default YES)
-7) Registration to standard (default YES)
+7) Registration to standard (default NO)
