@@ -184,7 +184,9 @@ echo -e "${CONTAINER}  Running FEAT..."
 time feat ${DESIGN_FILE}
 FEAT_EXIT_STATUS=$?
 
-
+if [[ $FEAT_EXIT_STATUS == 0 ]]; then
+  echo -e "${CONTAINER}  FEAT completed successfully!"
+fi
 ####################################################################
 # Upon success, convert index to a webpage
 ####################################################################
@@ -206,16 +208,25 @@ fi
 ####################################################################
 
 if [[ $FEAT_EXIT_STATUS == 0 ]]; then
+
+  echo -e "${CONTAINER}  Compressing outputs..."
   # FEAT will create an ${FEAT_OUTPUT_DIR}.feat directory anyways, so we can
   # delete the old one and set the var to the actual output directory
   rm -rf ${FEAT_OUTPUT_DIR}
   FEAT_OUTPUT_DIR=${FEAT_OUTPUT_DIR}.feat
 
   # Zip and move the relevant files to the output directory
-  MC_DIR=$(find ${FEAT_OUTPUT_DIR}/* -type d -name "mc")
-  zip -r ${OUTPUT_DIR}/mc.zip ${MC_DIR} && rm -rf ${MC_DIR}
-  LOG_DIR=$(find ${FEAT_OUTPUT_DIR}/* -type d -name "logs")
-  zip -r ${OUTPUT_DIR}/logs.zip ${LOG_DIR} && rm -rf ${LOG_DIR}
+  pushd ${FEAT_OUTPUT_DIR} > /dev/null
+  zip -rq ${OUTPUT_DIR}/logs.zip logs && rm -rf logs
+
+  if [[ ${FW_CONFIG_MC} == 1 ]]; then
+    zip -rq ${OUTPUT_DIR}/mc.zip mc && rm -rf mc
+  fi
+
+  if [[ ${FW_CONFIG_REG_STANDARD_IMAGE} == 1 ]]; then
+    zip -rq ${OUTPUT_DIR}/reg.zip reg && rm -rf reg
+  fi
+  popd > /dev/null
   mv ${FEAT_OUTPUT_DIR}/* ${OUTPUT_DIR} && rm -rf ${FEAT_OUTPUT_DIR}
 fi
 
