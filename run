@@ -25,16 +25,34 @@ source /etc/fsl/5.0/fsl.sh
 export USER=Flywheel
 
 
-###############################################################################
-# Initialize config from the manifest
+##############################################################################
+# Parse configuration
 
-if [[ -f $CONFIG_FILE ]]; then
-  eval $(jq -r '.config | to_entries[] | "FW_CONFIG_\(.key)=\(.value)"' $CONFIG_FILE)
-else
-  CONFIG_FILE=$FLYWHEEL_BASE/manifest.json
-  eval $(jq -r '.config | to_entries[] | "FW_CONFIG_\(.key)=\(.value.default)"' $CONFIG_FILE)
-fi
+function parse_config {
 
+  CONFIG_FILE=$FLYWHEEL_BASE/config.json
+  MANIFEST_FILE=$FLYWHEEL_BASE/manifest.json
+
+  if [[ -f $CONFIG_FILE ]]; then
+    echo "$(cat $CONFIG_FILE | jq -r '.config.'$1)"
+  else
+    CONFIG_FILE=$MANIFEST_FILE
+    echo "$(cat $MANIFEST_FILE | jq -r '.config.'$1'.default')"
+  fi
+}
+
+FW_CONFIG_BB_THRESH="$(parse_config 'BB_THRESH')"
+FW_CONFIG_Z_THRESH="$(parse_config 'Z_THRESH')"
+FW_CONFIG_NOISE_LVL="$(parse_config 'NOISE_LVL')"
+FW_CONFIG_T_SMOOTH="$(parse_config 'T_SMOOTH')"
+FW_CONFIG_MC="$(parse_config 'MC')"
+FW_CONFIG_STC="$(parse_config 'STC')"
+FW_CONFIG_BET="$(parse_config 'BET')"
+FW_CONFIG_FWHM="$(parse_config 'FW_CONFIG_FWHM')"
+FW_CONFIG_INT_NORM="$(parse_config 'INT_NORM')"
+FW_CONFIG_HPF_CUTOF="$(parse_config 'HPF_CUTOF')"
+FW_CONFIG_HPF="$(parse_config 'HPF')"
+FW_CONFIG_REG_STANDARD_IMAGE="$(parse_config 'REG_STANDARD_IMAGE')"
 
 ###############################################################################
 # INPUT File
