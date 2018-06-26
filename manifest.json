@@ -7,7 +7,9 @@
   "url": "http://fsl.fmrib.ox.ac.uk/fsl/fslwiki/FEAT",
   "source": "https://github.com/flywheel-apps/fsl-feat",
   "license": "Apache-2.0",
-  "flywheel": "0",
+  "flywheel": {
+    "suite": "FSL"
+  },
   "version": "0.1.2",
   "custom": {
     "docker-image": "flywheel/fsl-feat:0.1.2"
