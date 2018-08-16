@@ -88,7 +88,7 @@
   },
   "inputs": {
     "NIFTI": {
-      "description": "Anatomical NIfTI image, or multi-channel set of images, to be segmented.",
+      "description": "FUNCTIONAL NIfTI file to be processed.",
       "base": "file",
       "type": {
         "enum": [
