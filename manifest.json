@@ -12,7 +12,7 @@
   "custom": {
     "docker-image": "flywheel/fsl-feat:0.1.5",
     "gear-builder": {
-      "category": "utility",
+      "category": "analysis",
       "image": "flywheel/fsl-feat:0.1.5"
     },
 
