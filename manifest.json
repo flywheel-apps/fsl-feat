@@ -15,7 +15,8 @@
       "category": "utility",
       "image": "flywheel/fsl-feat:0.1.5"
     },
-    "flywheel": {
+
+  "flywheel": {
       "suite": "FSL"
     }
   },
