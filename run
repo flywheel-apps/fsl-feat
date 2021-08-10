@@ -12,7 +12,7 @@ echo -e "$CONTAINER  Initiated"
 FLYWHEEL_BASE=/flywheel/v0
 OUTPUT_DIR=$FLYWHEEL_BASE/output
 INPUT_DIR=$FLYWHEEL_BASE/input/NIFTI
-SLICE_FILE_DIR=$FLYWHEEL_BASE/input/SCLICE_FILE
+SLICE_FILE_DIR=$FLYWHEEL_BASE/input/SLICE_FILE
 MANIFEST=$FLYWHEEL_BASE/manifest.json
 CONFIG_FILE=$FLYWHEEL_BASE/config.json
 TEMPLATE=$FLYWHEEL_BASE/template.fsf
@@ -54,7 +54,6 @@ FW_CONFIG_HPF_CUTOFF="$(parse_config 'HPF_CUTOFF')"
 FW_CONFIG_HPF="$(parse_config 'HPF')"
 FW_CONFIG_REG_STANDARD_IMAGE="$(parse_config 'REG_STANDARD_IMAGE')"
 FW_CONFIG_LPF="$(parse_config 'LPF')"
-FW_CONFIG_STD_TEMPLATE="$(parse_config 'STANDARD_TEMPLATE')"
 FW_CONFIG_ALT_TEMPLATE="$(parse_config 'Use_alt_template')"
 
 ###############################################################################
@@ -66,6 +65,12 @@ if [[ -z $input_file ]]; then
   exit 1
 fi
 
+if [[ $FW_CONFIG_ALT_TEMPLATE == 1 ]] ; then
+  eval $(jq -r '.inputs | to_entries[] | "FW_INPUT_\(.key)=\(.value.location.path)"' $CONFIG_FILE)
+  echo "$(set | grep FW_INPUT)"
+  STANDARD_TEMPLATE=$FW_INPUT_STANDARD_TEMPLATE
+else
+  STANDARD_TEMPLATE="/usr/share/fsl/data/standard/MNI152_T1_2mm_brain"
 
 ####################################################################
 # FillTemplate
@@ -157,6 +162,12 @@ if [[ $STC == 2 ]]; then
 else
   SLICE_FILE=''
 fi
+
+if [[ $FW_CONFIG_ALT_TEMPLATE == 1 ]] ; then
+  STANDARD_TEMPLATE=$(find $TEMPLATE_DIR/)
+else
+  STANDARD_TEMPLATE="/usr/share/fsl/data/standard/MNI152_T1_2mm_brain"
+fi
 # RUN BRAIN EXTRACTION USING FSL's BET
 BET=$FW_CONFIG_BET
 
@@ -176,10 +187,6 @@ HPF=$FW_CONFIG_HPF
 LPF=$FW_CONFIG_LPF
 
 REG_STANDARD_IMAGE=$FW_CONFIG_REG_STANDARD_IMAGE
-if [[ $FW_CONFIG_ALT_TEMPLATE == 1 ]] ; then
-  STANDARD_TEMPLATE=$FW_CONFIG_STD_TEMPLATE
-else
-  STANDARD_TEMPLATE="/usr/share/fsl/data/standard/MNI152_T1_2mm_brain"
 
 ####################################################################
 # CREATE TEMPLATE
