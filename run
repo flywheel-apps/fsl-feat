@@ -55,6 +55,7 @@ FW_CONFIG_HPF="$(parse_config 'HPF')"
 FW_CONFIG_REG_STANDARD_IMAGE="$(parse_config 'REG_STANDARD_IMAGE')"
 FW_CONFIG_LPF="$(parse_config 'LPF')"
 FW_CONFIG_STD_TEMPLATE="$(parse_config 'STANDARD_TEMPLATE')"
+FW_CONFIG_ALT_TEMPLATE="$(parse_config 'Use_alt_template')"
 
 ###############################################################################
 # INPUT File
@@ -175,8 +176,10 @@ HPF=$FW_CONFIG_HPF
 LPF=$FW_CONFIG_LPF
 
 REG_STANDARD_IMAGE=$FW_CONFIG_REG_STANDARD_IMAGE
-
-STANDARD_TEMPLATE=$FW_CONFIG_STD_TEMPLATE
+if [[ $FW_CONFIG_ALT_TEMPLATE == 1 ]] ; then
+  STANDARD_TEMPLATE=$FW_CONFIG_STD_TEMPLATE
+else
+  STANDARD_TEMPLATE="/usr/share/fsl/data/standard/MNI152_T1_2mm_brain"
 
 ####################################################################
 # CREATE TEMPLATE
