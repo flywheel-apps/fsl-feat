@@ -20,8 +20,8 @@ TEMPLATE=$FLYWHEEL_BASE/template.fsf
 ###############################################################################
 # Configure the ENV
 
-chmod +x /etc/fsl/5.0/fsl.sh
-source /etc/fsl/5.0/fsl.sh
+chmod +x /etc/fsl/6.0/fsl.sh
+source /etc/fsl/6.0/fsl.sh
 export USER=Flywheel
 
 
@@ -50,10 +50,11 @@ FW_CONFIG_STC="$(parse_config 'STC')"
 FW_CONFIG_BET="$(parse_config 'BET')"
 FW_CONFIG_FWHM="$(parse_config 'FWHM')"
 FW_CONFIG_INT_NORM="$(parse_config 'INT_NORM')"
-FW_CONFIG_HPF_CUTOF="$(parse_config 'HPF_CUTOF')"
+FW_CONFIG_HPF_CUTOFF="$(parse_config 'HPF_CUTOFF')"
 FW_CONFIG_HPF="$(parse_config 'HPF')"
 FW_CONFIG_REG_STANDARD_IMAGE="$(parse_config 'REG_STANDARD_IMAGE')"
 FW_CONFIG_LPF="$(parse_config 'LPF')"
+FW_CONFIG_STD_TEMPLATE="$(parse_config 'STANDARD_TEMPLATE')"
 
 ###############################################################################
 # INPUT File
@@ -175,13 +176,15 @@ LPF=$FW_CONFIG_LPF
 
 REG_STANDARD_IMAGE=$FW_CONFIG_REG_STANDARD_IMAGE
 
+STANDARD_TEMPLATE=$FW_CONFIG_STD_TEMPLATE
+
 ####################################################################
 # CREATE TEMPLATE
 ####################################################################
 
 # Create a lost of all the variable names
 # which match the place-holding text in the template
-VAR_STRINGS=( INPUT_DATA TR NUM_VOL NUM_VOX DEL_VOL FEAT_OUTPUT_DIR BB_THRESH Z_THRESH NOISE_LVL T_SMOOTH MC STC SLICE_FILE BET FWHM INT_NORM HPF_CUTOFF HPF LPF REG_STANDARD_IMAGE )
+VAR_STRINGS=( INPUT_DATA TR NUM_VOL NUM_VOX DEL_VOL FEAT_OUTPUT_DIR BB_THRESH Z_THRESH NOISE_LVL T_SMOOTH MC STC SLICE_FILE BET FWHM INT_NORM HPF_CUTOFF HPF LPF REG_STANDARD_IMAGE STANDARD_TEMPLATE)
 
 DESIGN_FILE=${OUTPUT_DIR}/Design.fsf
 cp ${TEMPLATE} ${DESIGN_FILE}

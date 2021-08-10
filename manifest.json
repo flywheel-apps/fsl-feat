@@ -72,7 +72,7 @@
       "maximum": 1,
       "type": "integer"
     },
-    "HPF_CUTOF": {
+    "HPF_CUTOFF": {
       "description": "HIGHPASS FILTER CUTOFF (seconds) [default=100]",
       "default": 100,
       "type": "number"
@@ -92,8 +92,8 @@
       "type": "integer"
     },
     "REG_STANDARD_IMAGE": {
-      "description": "REGISTER TO STANDARD IMAGE (MNI152_T1_2mm_brain) [1=yes, 0=no. default=0]",
-      "default": 0,
+      "description": "REGISTER TO STANDARD IMAGE (MNI152_T1_2mm_brain) [1=yes, 0=no. default=1]",
+      "default": 1,
       "minimum": 0,
       "maximum": 1,
       "type": "integer"
@@ -112,6 +112,17 @@
     "SLICE_FILE": {
       "description": "SLICE ORDER/TIMING FILE. Must set STC config option to 3.",
       "base": "file",
+      "optional": true,
+      "type": {
+        "enum": [
+          "text"
+        ]
+      }
+    },
+    "STANDARD_TEMPLATE": {
+      "description": "Template to which other images are registered. Must set REG_STANDARD_IMAGE to 1.",
+      "base": "file",
+      "default":"/usr/share/fsl/data/standard/MNI152_T1_2mm_brain",
       "optional": true,
       "type": {
         "enum": [
