@@ -8,12 +8,12 @@
   "source": "https://github.com/flywheel-apps/fsl-feat",
   "license": "Apache-2.0",
 
-  "version": "0.1.6",
+  "version": "1.0.1a_6.0.0",
   "custom": {
-    "docker-image": "flywheel/fsl-feat:0.1.6",
+    "docker-image": "fsl-feat:1.0.0_6.0.0",
     "gear-builder": {
       "category": "analysis",
-      "image": "flywheel/fsl-feat:0.1.6"
+      "image": "fsl-feat:1.0.0_6.0.0"
     },
 
   "flywheel": {
