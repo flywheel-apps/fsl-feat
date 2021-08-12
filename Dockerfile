@@ -2,10 +2,23 @@
 ############################################################
 # This is the Dockerfile to build a machine with a bare-   #
 # bones installation of the latest FSL (6.0).              #
-# It is from:                                              #
-#https://github.com/cbinyu/fsl6-core/blob/master/Dockerfile#
-# there is one line (44 in repo) modified here             #
 ############################################################
+
+# This docker file is from:
+# https://github.com/cbinyu/fsl6-core/blob/master/Dockerfile#
+# there are a few lines modified here:
+#   - removed line 44 in repo (would come after line 60 here)
+#   - line 171-173 in repo (lines 188 to 190 here): changed {FSLDIR}/fslpython/lib/python3.8 to {FSLDIR}/fslpython/lib/python3.9
+#   - disabled line 171 in repo (line 180 here)
+#   - line 146 in repo (163/164 here), ${FSL_PYTHON}/share/jupyter/nbextensions/plotlywidget does not exist anymore (FSL update?). It's now
+#     "${FSL_PYTHON}/share/jupyter/nbextensions/jupyterlab-plotly".  ALso has to be renamed to
+#     "${FSL_PYTHON}/share/jupyter/nbextensions/jupyterlab_plotly" to match its "mirroring" library in
+#     ${FSL_PYTHON}/lib/python3.7/site-packages/$(basename ${l})/nbextension/
+#   - line 147 in repo (line 164 here), "${FSL_PYTHON}/lib/python3.7/site-packages/$(basename ${l})/static/" no longer exists,
+#     now it's ${FSL_PYTHON}/lib/python3.7/site-packages/$(basename ${l})/nbextension/
+
+
+
 
 ###   Start by creating a "builder"   ###
 
