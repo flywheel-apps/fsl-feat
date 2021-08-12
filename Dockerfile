@@ -10,7 +10,7 @@
 ###   Start by creating a "builder"   ###
 
 ARG DEBIAN_VERSION=buster
-ARG BASE_PYTHON_VERSION=3.8
+ARG BASE_PYTHON_VERSION=3.9
 # (don't use simply PYTHON_VERSION bc. it's an env variable)
 ARG FSL_VERSION=6.0.4
 
@@ -201,6 +201,12 @@ COPY --from=builder ./create_links.sh  /create_links.sh
 RUN chmod u+x /create_links.sh && \
     /create_links.sh
 
+#RUN curl https://packages.bic.mni.mcgill.ca/mni-models/icbm152/mni_icbm152_nl_VI_nifti.zip --output /tmp/mni.zip && \
+#    unzip /tmp/mni.zip -d /${FSLDIR}/data/standard && \
+#    rm /tmp/mni.zip && \
+#    mv ${FSLDIR}/data/standard/icbm_avg_152_t1_tal_nlin_symmetric_VI.nii
+#RUN curl -#L  $URL | bsdtar -xf- -C /opt/
+
 # Overwrite the entrypoint of the base Docker image (python)
 
 
@@ -231,6 +237,8 @@ RUN mkdir -p ${FLYWHEEL}
 COPY run ${FLYWHEEL}/run
 COPY manifest.json ${FLYWHEEL}/manifest.json
 COPY template.fsf ${FLYWHEEL}/
+
+
 
 
 # Configure entrypoint
