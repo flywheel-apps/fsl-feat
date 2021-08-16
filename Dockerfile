@@ -236,7 +236,7 @@ RUN apt-get update \
         python-pip
 
 
- Download/Install webpage2html
+# Download/Install webpage2html
 ENV COMMIT=7a72d6eb70fdc821f3bc064636ee48eed14dd76a
 ENV URL=https://github.com/zTrix/webpage2html/archive/$COMMIT.zip
 RUN curl -#L  $URL | bsdtar -xf- -C /opt/
