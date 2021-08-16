@@ -15,5 +15,6 @@ This includes the following steps, all of which are optional (see `manifest.json
 4) Intensity Normalization  (default YES)
 5) High-Pass Filtering      (default 100s cutoff)
 6) Brain extraction         (default YES)
-7) Registration to standard (default NO)
+7) Registration to standard (default YES)
+   - Registration to alternate templates is supported when a Standard Template is specified AND the Use alt template option is set to 1 (true).
 8) Low_pass Filtering       (default NO)
