@@ -8,16 +8,19 @@
   "source": "https://github.com/flywheel-apps/fsl-feat",
   "license": "Apache-2.0",
 
-  "version": "1.0.3_6.0",
+  "version": "1.0.3a_6.0",
   "custom": {
-    "docker-image": "flywheel/fsl-feat:1.0.3_6.0",
     "gear-builder": {
       "category": "analysis",
-      "image": "flywheel/fsl-feat:1.0.3_6.0"
+      "image": "flywheel/fsl-feat:1.0.3a_6.0"
     },
 
   "flywheel": {
-      "suite": "FSL"
+      "suite": "Image Processing - Functional",
+      "type": ["NIFTI"],
+      "modality": ["MR"],
+      "classification": ["fMRI"],
+      "components": ["FSL"]
     }
   },
   "config": {
@@ -92,14 +95,14 @@
       "type": "integer"
     },
     "REG_STANDARD_IMAGE": {
-      "description": "REGISTER TO STANDARD IMAGE (MNI152_T1_2mm_brain) [1=yes, 0=no. default=1]",
+      "description": "REGISTER TO A STANDARD IMAGE [1=yes, 0=no. default=1]. If Standard Template not supplied as an input, MNI152 2mm will be used.",
       "default": 1,
       "minimum": 0,
       "maximum": 1,
       "type": "integer"
     },
     "Use_alt_template": {
-      "description": "Use a specified template (from the inputs tab) to register the images. [1=yes, 0=no. default=0]",
+      "description": "Use the specified template (from the inputs tab) to register the images. [1=yes, 0=no. default=0]",
       "default": 0,
       "minimum": 0,
       "maximum": 1,

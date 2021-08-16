@@ -172,11 +172,6 @@ else
   SLICE_FILE=''
 fi
 
-if [[ $FW_CONFIG_ALT_TEMPLATE == 1 ]] ; then
-  STANDARD_TEMPLATE=$(find $TEMPLATE_DIR/)
-else
-  STANDARD_TEMPLATE="/usr/share/fsl/data/standard/MNI152_T1_2mm_brain"
-fi
 # RUN BRAIN EXTRACTION USING FSL's BET
 BET=$FW_CONFIG_BET
 
