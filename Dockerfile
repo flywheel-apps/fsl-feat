@@ -237,12 +237,13 @@ RUN apt-get update \
 
 
 # Download/Install webpage2html
-ENV COMMIT=4dec20eba862335aaf1718d04b313bdc96e7dc8e
-ENV URL=https://github.com/zTrix/webpage2html/archive/$COMMIT.zip
-RUN curl -#L  $URL | bsdtar -xf- -C /opt/
-WORKDIR /opt
-RUN mv webpage2html-$COMMIT webpage2html
-RUN pip install -r webpage2html/requirements.txt
+#ENV COMMIT=4dec20eba862335aaf1718d04b313bdc96e7dc8e
+#ENV URL=https://github.com/zTrix/webpage2html/archive/$COMMIT.zip
+#RUN curl -#L  $URL | bsdtar -xf- -C /opt/
+#WORKDIR /opt
+#RUN mv webpage2html-$COMMIT webpage2html
+#RUN pip install -r webpage2html/requirements.txt
+RUN pip install webpage2html
 
 # Make directory for flywheel spec (v0)
 ENV FLYWHEEL /flywheel/v0
