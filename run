@@ -19,9 +19,17 @@ TEMPLATE=$FLYWHEEL_BASE/template.fsf
 
 ###############################################################################
 # Configure the ENV
-
-chmod +x /etc/fsl/6.0/fsl.sh
-source /etc/fsl/6.0/fsl.sh
+export BASE_PYTHON_VERSION=3.8
+export PYTHON_LIB_PATH=/usr/local/lib/python${BASE_PYTHON_VERSION}
+export FSLDIR=/usr/local/fsl/
+export FSLTCLSH=${FSLDIR}/fsltclsh
+export FSLWISH=${FSLDIR}/fslwish
+export FSLCONFDIR=${FSLDIR}/config
+export FSLOUTPUTTYPE=NIFTI_GZ
+export PATH=${FSLDIR}/bin:$PATH
+export LD_LIBRARY_PATH=${FSLDIR}:${LD_LIBRARY_PATH}
+chmod +x ${FSLDIR}/etc/fslconf/fsl.sh
+source ${FSLDIR}/etc/fslconf/fsl.sh
 export USER=Flywheel
 
 
@@ -71,6 +79,7 @@ if [[ $FW_CONFIG_ALT_TEMPLATE == 1 ]] ; then
   STANDARD_TEMPLATE=$FW_INPUT_STANDARD_TEMPLATE
 else
   STANDARD_TEMPLATE="/usr/share/fsl/data/standard/MNI152_T1_2mm_brain"
+fi
 
 ####################################################################
 # FillTemplate
@@ -196,7 +205,7 @@ REG_STANDARD_IMAGE=$FW_CONFIG_REG_STANDARD_IMAGE
 # which match the place-holding text in the template
 VAR_STRINGS=( INPUT_DATA TR NUM_VOL NUM_VOX DEL_VOL FEAT_OUTPUT_DIR BB_THRESH Z_THRESH NOISE_LVL T_SMOOTH MC STC SLICE_FILE BET FWHM INT_NORM HPF_CUTOFF HPF LPF REG_STANDARD_IMAGE STANDARD_TEMPLATE)
 
-DESIGN_FILE=${OUTPUT_DIR}/Design.fsf
+DESIGN_FILE=${OUTPUT_DIR}/design.fsf
 cp ${TEMPLATE} ${DESIGN_FILE}
 
 # loop through and preform substitution
