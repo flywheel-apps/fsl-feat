@@ -253,7 +253,6 @@ COPY manifest.json ${FLYWHEEL}/manifest.json
 COPY template.fsf ${FLYWHEEL}/
 
 
-
-
 # Configure entrypoint
-ENTRYPOINT ["/bin/bash"]
+# ENTRYPOINT ["/bin/bash"]
+ENTRYPOINT ["/flywheel/v0/run"]
