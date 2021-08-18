@@ -77,7 +77,7 @@ if [[ $FW_CONFIG_ALT_TEMPLATE == 1 ]] ; then
   eval $(jq -r '.inputs | to_entries[] | "FW_INPUT_\(.key)=\(.value.location.path)"' $CONFIG_FILE)
   echo "$(set | grep FW_INPUT)"
   STANDARD_TEMPLATE=$FW_INPUT_STANDARD_TEMPLATE
-elif [[ $FW_CONFIG_ALT_TEMPLATE == 0 ]] ; then
+else
   STANDARD_TEMPLATE="${FSLDIR}/data/standard/MNI152_T1_2mm_brain.nii.gz"
 fi
 
