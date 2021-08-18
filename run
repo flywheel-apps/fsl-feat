@@ -78,7 +78,7 @@ if [[ $FW_CONFIG_ALT_TEMPLATE == 1 ]] ; then
   echo "$(set | grep FW_INPUT)"
   STANDARD_TEMPLATE=$FW_INPUT_STANDARD_TEMPLATE
 elif [[ $FW_CONFIG_ALT_TEMPLATE == 0 ]] ; then
-  STANDARD_TEMPLATE="/usr/share/fsl/data/standard/MNI152_T1_2mm_brain.nii.gz"
+  STANDARD_TEMPLATE="/usr/local/fsl/data/standard/MNI152_T1_2mm_brain.nii.gz"
 fi
 
 ####################################################################
