@@ -1,9 +1,9 @@
 0.1.7
-###Documentation
+### Documentation
 - Add docs + release_notes.md
-###Enhancements
+### Enhancements
 - Upgrade to FSL 6.0
 - Add flexible standard template
-###Fixes
+### Fixes
 - Highpass filter cutoff variable now consistent
 - Changed REG_STANDARD_IMAGE default to yes
