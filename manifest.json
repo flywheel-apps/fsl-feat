@@ -72,7 +72,7 @@
       "maximum": 1,
       "type": "integer"
     },
-    "HPF_CUTOF": {
+    "HPF_CUTOFF": {
       "description": "HIGHPASS FILTER CUTOFF (seconds) [default=100]",
       "default": 100,
       "type": "number"
