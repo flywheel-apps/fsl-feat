@@ -1,4 +1,4 @@
-0.1.7
+1.0.3_6.0
 ### Documentation
 - Add docs + release_notes.md
 ### Enhancements
