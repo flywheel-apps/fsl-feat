@@ -7,7 +7,6 @@
   "url": "http://fsl.fmrib.ox.ac.uk/fsl/fslwiki/FEAT",
   "source": "https://github.com/flywheel-apps/fsl-feat",
   "license": "Apache-2.0",
-
   "version": "0.1.6",
   "custom": {
     "docker-image": "flywheel/fsl-feat:0.1.6",
@@ -72,7 +71,7 @@
       "maximum": 1,
       "type": "integer"
     },
-    "HPF_CUTOF": {
+    "HPF_CUTOFF": {
       "description": "HIGHPASS FILTER CUTOFF (seconds) [default=100]",
       "default": 100,
       "type": "number"
