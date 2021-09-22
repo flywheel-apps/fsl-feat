@@ -15,8 +15,9 @@
     },
     "DOF": {
       "default": 12,
-      "description": "Degrees of Freedom for registration to standard space",
-      "type": { "enum": [3, 6, 12]}
+      "description": "Degrees of Freedom for registration to standard space (allowed: 3, 6, 12)",
+      "type": "integer",
+      "enum": [3, 6, 12]
     },
     "FNIRT": {
       "default": 0,
@@ -78,7 +79,8 @@
     "SEARCH_SPACE": {
       "default": 90,
       "description": "Search space for registration to initial structural. 0 = no search; 90 = normal search; 180 = full search",
-      "type" : {"enum": [0, 90, 180]}
+      "type" : "integer",
+      "enum": [0, 90, 180]
     },
     "STC": {
       "default": 1,
