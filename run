@@ -63,6 +63,9 @@ FW_CONFIG_HPF="$(parse_config 'HPF')"
 FW_CONFIG_REG_STANDARD_IMAGE="$(parse_config 'REG_STANDARD_IMAGE')"
 FW_CONFIG_LPF="$(parse_config 'LPF')"
 FW_CONFIG_ALT_TEMPLATE="$(parse_config 'Use_alt_template')"
+FW_DOF="$(parse_config 'DOF')"
+FW_FNIRT="$(parse_config 'FNIRT')"
+FW_SEARCH_SPACE="$(parse_config 'SEARCH_SPACE')"
 
 ###############################################################################
 # INPUT File
@@ -190,6 +193,16 @@ HPF=$FW_CONFIG_HPF
 # RUN LOWPASS FILTERING
 LPF=$FW_CONFIG_LPF
 
+# Select Degrees of Freedom for registration
+DOF=$FW_DOF
+
+# Use nonlinear registration
+FNIRT=$FW_FNIRT
+
+# How exhaustive is the search space?
+SEARCH_SPACE=$FW_SEARCH_SPACE
+
+
 REG_STANDARD_IMAGE=$FW_CONFIG_REG_STANDARD_IMAGE
 
 ####################################################################
@@ -198,7 +211,7 @@ REG_STANDARD_IMAGE=$FW_CONFIG_REG_STANDARD_IMAGE
 
 # Create a lost of all the variable names
 # which match the place-holding text in the template
-VAR_STRINGS=( INPUT_DATA TR NUM_VOL NUM_VOX DEL_VOL FEAT_OUTPUT_DIR BB_THRESH Z_THRESH NOISE_LVL T_SMOOTH MC STC SLICE_FILE BET FWHM INT_NORM HPF_CUTOFF HPF LPF REG_STANDARD_IMAGE STANDARD_TEMPLATE)
+VAR_STRINGS=( INPUT_DATA TR NUM_VOL NUM_VOX DEL_VOL FEAT_OUTPUT_DIR BB_THRESH Z_THRESH NOISE_LVL T_SMOOTH MC STC SLICE_FILE BET FWHM INT_NORM HPF_CUTOFF HPF LPF DOF FNIRT SEARCH_SPACE REG_STANDARD_IMAGE STANDARD_TEMPLATE)
 
 DESIGN_FILE=${OUTPUT_DIR}/design.fsf
 cp ${TEMPLATE} ${DESIGN_FILE}

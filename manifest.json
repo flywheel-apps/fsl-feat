@@ -13,6 +13,18 @@
       "minimum": 0,
       "type": "integer"
     },
+    "DOF": {
+      "default": 12,
+      "description": "Degrees of Freedom for registration to standard space",
+      "type": { "enum": [3, 6, 12]}
+    },
+    "FNIRT": {
+      "default": 0,
+      "description": "Do nonlinear registration from structural to standard space? (default no = 0)",
+      "maximum": 1,
+      "minimum": 0,
+      "type": "integer"
+    },
     "FWHM": {
       "default": 5,
       "description": "FWHM FOR SPATIAL SMOOTHING (mm) [default=5]",
@@ -62,6 +74,11 @@
       "maximum": 1,
       "minimum": 0,
       "type": "integer"
+    },
+    "SEARCH_SPACE": {
+      "default": 90,
+      "description": "Search space for registration to initial structural. 0 = no search; 90 = normal search; 180 = full search",
+      "type" : {"enum": [0, 90, 180]}
     },
     "STC": {
       "default": 1,
