@@ -17,7 +17,11 @@
       "default": 12,
       "description": "Degrees of Freedom for registration to standard space (allowed: 3, 6, 12)",
       "type": "integer",
-      "enum": [3, 6, 12]
+      "enum": [
+        3,
+        6,
+        12
+      ]
     },
     "FNIRT": {
       "default": 0,
@@ -79,8 +83,12 @@
     "SEARCH_SPACE": {
       "default": 90,
       "description": "Search space for registration to initial structural. 0 = no search; 90 = normal search; 180 = full search",
-      "type" : "integer",
-      "enum": [0, 90, 180]
+      "type": "integer",
+      "enum": [
+        0,
+        90,
+        180
+      ]
     },
     "STC": {
       "default": 1,
@@ -107,16 +115,32 @@
   },
   "custom": {
     "flywheel": {
-      "classification": [
-        "fMRI"
-      ],
+      "classification": {
+        "species": [
+          "Animal",
+          "Human"
+        ],
+        "organ": [
+          "Brain"
+        ],
+        "therapeutic_area": [
+          "Psychiatry/Psychology",
+          "Neurology"
+        ],
+        "modality": [
+          "MR"
+        ],
+        "function": [
+          "Image Processing - Functional"
+        ]
+      },
       "components": [
         "FSL"
       ],
       "modality": [
         "MR"
       ],
-      "suite": "Image Processing - Functional",
+      "suite": "Image Processing",
       "type": [
         "NIFTI"
       ]
@@ -162,7 +186,7 @@
   "license": "Apache-2.0",
   "maintainer": "Flywheel <support@flywheel.io>",
   "name": "fsl-feat",
-  "source": "https://github.com/flywheel-apps/fsl-feat",
-  "url": "http://fsl.fmrib.ox.ac.uk/fsl/fslwiki/FEAT",
+  "source": "http://fsl.fmrib.ox.ac.uk/fsl/fslwiki/FEAT",
+  "url": "https://github.com/flywheel-apps/fsl-feat",
   "version": "1.0.4_6.0"
 }
