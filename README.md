@@ -1,3 +1,6 @@
+> [!WARNING]
+> This repo has moved to [https://gitlab.com/flywheel-io/scientific-solutions/gears/github/fsl-feat](https://gitlab.com/flywheel-io/scientific-solutions/gears/github/fsl-feat)
+
 [![Docker Pulls](https://img.shields.io/docker/pulls/flywheel/fsl-feat.svg)](https://hub.docker.com/r/flywheel/fsl-feat/)
 [![Docker Stars](https://img.shields.io/docker/stars/flywheel/fsl-feat.svg)](https://hub.docker.com/r/flywheel/fsl-feat/)
 
